@@ -100,50 +100,56 @@ public:
 
 class TaskManager {
 public:
-    void addTask(string id, string title, string description, string dueDate, string status) {
+    void addTask(int id, string title, string description, string dueDate, string status) {
         string directory = "../database/";
-        string fileName = directory + id + ".txt";
-        ifstream inputFile(fileName);
+        string file = directory + to_string(id) + ".txt";
 
-        if (!inputFile) {
-            ofstream outputFile(fileName);
+        ofstream outputFile(file);
 
-            Task task(id, title, description, dueDate, status);
+        Task task(to_string(id), title, description, dueDate, status);
+        outputFile << task.getId() << endl
+                   << task.getTitle() << endl
+                   << task.getDescription() << endl
+                   << task.getDueDate() << endl
+                   << task.getStatus();
+        outputFile.close();
+    }
 
-            outputFile << task.getId() << endl
-                       << task.getTitle() << endl
-                       << task.getDescription() << endl
-                       << task.getDueDate() << endl
-                       << task.getStatus() << endl;
-            outputFile.close();
-        }
-        else {
-            id = id + "-regenerated";
-            fileName = directory + id + ".txt";
+    void updateStatus(int id, string status) {
+        string taskId;
+        string taskTitle;
+        string taskDescription;
+        string taskDueDate;
+        string taskStatus;
 
-            ofstream outputFile(fileName);
+        string directory = "../database/";
+        string file = directory + to_string(id) + ".txt";
 
-            Task task(id, title, description, dueDate, status);
+        ifstream inputFile(file);
+        getline(inputFile, taskId);
+        getline(inputFile, taskTitle);
+        getline(inputFile, taskDescription);
+        getline(inputFile, taskDueDate);
+        getline(inputFile, taskStatus);
 
-            outputFile << task.getId() << endl
-                       << task.getTitle() << endl
-                       << task.getDescription() << endl
-                       << task.getDueDate() << endl
-                       << task.getStatus() << endl;
+        taskStatus = status;
 
-            outputFile.close();
-        }
-
-
+        ofstream outputFile(file);
+        outputFile << taskId << endl
+                   << taskTitle << endl
+                   << taskDescription << endl
+                   << taskDueDate << endl
+                   << taskStatus;
+        outputFile.close();
     }
 };
 
 int main() {
     TaskManager taskManager;
-    taskManager.addTask("1", "First Task", "Task Full Description", "02-03-2023", "Pending");
-    taskManager.addTask("3", "First Task", "Task Full Description", "02-03-2023", "Pending");
-    taskManager.addTask("3", "First Task", "Task Full Description", "02-03-2023", "Pending");
-
+    taskManager.addTask(1, "First Task", "Task Full Description", "02-03-2023", "Pending");
+    taskManager.addTask(2, "Second Task", "Task Full Description", "02-03-2023", "Pending");
+    taskManager.addTask(3, "Third Task", "Task Full Description", "02-03-2023", "Pending");
+    taskManager.updateStatus(1, "Completed");
     return 0;
 }
 
