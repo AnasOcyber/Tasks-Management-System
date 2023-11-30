@@ -189,14 +189,87 @@ public:
     }
 };
 
-int main() {
+void showMenu() {
     TaskManager taskManager;
-//    taskManager.addTask(1, "First Task", "Task Full Description", "02-03-2023", "Pending");
-//    taskManager.addTask(2, "Second Task", "Task Full Description", "02-03-2023", "Pending");
-//    taskManager.addTask(3, "Third Task", "Task Full Description", "02-03-2023", "Pending");
-//    taskManager.updateStatus(1, "Completed");
-//    taskManager.displayAll();
-//    taskManager.removeCompletedTask();
+
+    int choice;
+    while (choice != 5) {
+        cout << "1. Add new task" << endl
+             << "2. Update task status" << endl
+             << "3. Display tasks" << endl
+             << "4. Remove completed tasks" << endl
+             << "5. Exit" << endl;
+
+        cout << "Choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            int id;
+            string title;
+            string description;
+            string dueDate;
+            string status;
+
+            cout << "Task Id: ";
+            cin >> id;
+
+            cout << "Task Title: ";
+            cin >> title;
+
+            cout << "Task Description: ";
+            cin >> description;
+
+            cout << "Task Due Date (DD-MM-YYYY): ";
+            cin >> dueDate;
+
+            cout << "Task Status: ";
+            cin >> status;
+
+            taskManager.addTask(id, title, description, dueDate, status);
+        }
+
+        else if (choice == 2) {
+            int id;
+            char status;
+
+            cout << "Id: ";
+            cin >> id;
+
+            cout << "Note: C = Completed." << endl << "P = pending." << endl;
+
+
+            while (true) {
+                cout << "Status (C/P): ";
+                cin >> status;
+                if (status == 'C') {
+                    taskManager.updateStatus(id, "Completed");
+                    break;
+                }
+                else if (status == 'P') {
+                    taskManager.updateStatus(id, "Pending");
+                    break;
+                }
+                else
+                    cout << "Only C or P!";
+            }
+        }
+
+        else if (choice == 3)
+            taskManager.displayAll();
+
+        else if (choice == 4)
+            taskManager.removeCompletedTask();
+
+        else if (choice == 5)
+            cout << "Exiting";
+
+        else
+            cout << "Invalid choice." << endl;
+    }
+}
+
+int main() {
+    showMenu();
     return 0;
 }
 
