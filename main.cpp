@@ -3,6 +3,8 @@
 
 using namespace std;
 
+int counter = 0;
+
 class Task {
 private:
     string taskId;
@@ -99,9 +101,16 @@ public:
 
 
 class TaskManager {
+private:
+    string taskId;
+    string taskTitle;
+    string taskDescription;
+    string taskDueDate;
+    string taskStatus;
+    string directory = "../database/";
+
 public:
     void addTask(int id, string title, string description, string dueDate, string status) {
-        string directory = "../database/";
         string file = directory + to_string(id) + ".txt";
 
         ofstream outputFile(file);
@@ -113,16 +122,10 @@ public:
                    << task.getDueDate() << endl
                    << task.getStatus();
         outputFile.close();
+        counter++;
     }
 
     void updateStatus(int id, string status) {
-        string taskId;
-        string taskTitle;
-        string taskDescription;
-        string taskDueDate;
-        string taskStatus;
-
-        string directory = "../database/";
         string file = directory + to_string(id) + ".txt";
 
         ifstream inputFile(file);
@@ -142,14 +145,39 @@ public:
                    << taskStatus;
         outputFile.close();
     }
+
+    void displayAll() {
+        int id = 1;
+        while (id <= 3) {
+            string file = directory + to_string(id) + ".txt";
+
+            ifstream inputFile(file);
+            getline(inputFile, taskId);
+            getline(inputFile, taskTitle);
+            getline(inputFile, taskDescription);
+            getline(inputFile, taskDueDate);
+            getline(inputFile, taskStatus);
+
+            cout << taskId << "\t"
+                 << taskTitle << "\t"
+                 << taskDescription << "\t"
+                 << taskDueDate << "\t"
+                 << taskStatus << endl;
+            cout << ("---") << endl;
+
+            inputFile.close();
+            id++;
+        }
+    }
 };
 
 int main() {
     TaskManager taskManager;
-    taskManager.addTask(1, "First Task", "Task Full Description", "02-03-2023", "Pending");
-    taskManager.addTask(2, "Second Task", "Task Full Description", "02-03-2023", "Pending");
-    taskManager.addTask(3, "Third Task", "Task Full Description", "02-03-2023", "Pending");
-    taskManager.updateStatus(1, "Completed");
+//    taskManager.addTask(1, "First Task", "Task Full Description", "02-03-2023", "Pending");
+//    taskManager.addTask(2, "Second Task", "Task Full Description", "02-03-2023", "Pending");
+//    taskManager.addTask(3, "Third Task", "Task Full Description", "02-03-2023", "Pending");
+//    taskManager.updateStatus(1, "Completed");
+    taskManager.displayAll();
     return 0;
 }
 
