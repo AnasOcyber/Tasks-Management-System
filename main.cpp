@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -51,7 +52,6 @@ public:
         return taskStatus;
     }
 
-
     Task(string id, string title, string description, string dueDate, string status) {
         setId(id);
         setTitle(title);
@@ -97,7 +97,52 @@ public:
     }
 };
 
+
+class TaskManager {
+public:
+    void addTask(string id, string title, string description, string dueDate, string status) {
+        string directory = "../database/";
+        string fileName = directory + id + ".txt";
+        ifstream inputFile(fileName);
+
+        if (!inputFile) {
+            ofstream outputFile(fileName);
+
+            Task task(id, title, description, dueDate, status);
+
+            outputFile << task.getId() << endl
+                       << task.getTitle() << endl
+                       << task.getDescription() << endl
+                       << task.getDueDate() << endl
+                       << task.getStatus() << endl;
+            outputFile.close();
+        }
+        else {
+            id = id + "-regenerated";
+            fileName = directory + id + ".txt";
+
+            ofstream outputFile(fileName);
+
+            Task task(id, title, description, dueDate, status);
+
+            outputFile << task.getId() << endl
+                       << task.getTitle() << endl
+                       << task.getDescription() << endl
+                       << task.getDueDate() << endl
+                       << task.getStatus() << endl;
+
+            outputFile.close();
+        }
+
+
+    }
+};
+
 int main() {
+    TaskManager taskManager;
+    taskManager.addTask("1", "First Task", "Task Full Description", "02-03-2023", "Pending");
+    taskManager.addTask("3", "First Task", "Task Full Description", "02-03-2023", "Pending");
+    taskManager.addTask("3", "First Task", "Task Full Description", "02-03-2023", "Pending");
 
     return 0;
 }
