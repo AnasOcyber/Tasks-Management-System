@@ -169,6 +169,24 @@ public:
             id++;
         }
     }
+
+    void removeCompletedTask() {
+        int id = 0;
+        while (id <= 3) {
+            string file = directory + to_string(id) + ".txt";
+
+            ifstream inputFile(file);
+            getline(inputFile, taskId);
+            getline(inputFile, taskTitle);
+            getline(inputFile, taskDescription);
+            getline(inputFile, taskDueDate);
+            getline(inputFile, taskStatus);
+            inputFile.close();
+            if (taskStatus == "Completed")
+                remove(file.c_str());
+            id++;
+        }
+    }
 };
 
 int main() {
@@ -177,7 +195,8 @@ int main() {
 //    taskManager.addTask(2, "Second Task", "Task Full Description", "02-03-2023", "Pending");
 //    taskManager.addTask(3, "Third Task", "Task Full Description", "02-03-2023", "Pending");
 //    taskManager.updateStatus(1, "Completed");
-    taskManager.displayAll();
+//    taskManager.displayAll();
+//    taskManager.removeCompletedTask();
     return 0;
 }
 
