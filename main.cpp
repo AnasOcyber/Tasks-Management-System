@@ -106,15 +106,24 @@ private:
     string taskDueDate;
     string taskStatus;
     string directory = "../database/";
-    string totalFiles = directory + "total-files.txt";
+    string databaseRecords = directory + "total-files.txt";
 
 public:
-    void addTask(int id, string title, string description, string dueDate, string status) {
-        string file = directory + to_string(id) + ".txt";
+    void addTask(string title, string description, string dueDate) {
+        int id;
+        ifstream getRecords(databaseRecords);
+        getRecords >> id;
+        getRecords.close();
 
-//        Storing number of files
-        ofstream records(totalFiles);
-        records << id;
+        const string status = "Pending";
+        string file;
+
+        id++;
+        file = directory + to_string(id) + ".txt";
+
+        ofstream saveRecords(databaseRecords);
+        saveRecords << id;
+        saveRecords.close();
 
         ofstream outputFile(file);
 
@@ -125,6 +134,8 @@ public:
                    << task.getDueDate() << endl
                    << task.getStatus();
         outputFile.close();
+
+        cout << "Task added successfully." << endl;
     }
 
     void updateStatus(int id, string status) {
@@ -136,6 +147,7 @@ public:
         getline(inputFile, taskDescription);
         getline(inputFile, taskDueDate);
         getline(inputFile, taskStatus);
+        inputFile.close();
 
         taskStatus = status;
 
@@ -150,32 +162,48 @@ public:
 
     void displayAll() {
         int id;
-        ifstream records(totalFiles);
+        ifstream records(databaseRecords);
         records >> id;
+        records.close();
 
-       for (int index = 1; index <= id; index++) {
-            string file = directory + to_string(index) + ".txt";
+        if (id) {
+            for (int index = 1; index <= id; index++) {
+                string file = directory + to_string(index) + ".txt";
 
-            ifstream inputFile(file);
-
-            getline(inputFile, taskId);
-            getline(inputFile, taskTitle);
-            getline(inputFile, taskDescription);
-            getline(inputFile, taskDueDate);
-            getline(inputFile, taskStatus);
-            cout << taskId << "\t"
-                 << taskTitle << "\t"
-                 << taskDescription << "\t"
-                 << taskDueDate << "\t"
-                 << taskStatus << endl;
-            cout << ("---") << endl;
-            inputFile.close();
+                ifstream inputFile(file);
+                if(!inputFile){
+                    id++;
+                    continue;
+                }
+                getline(inputFile, taskId);
+                getline(inputFile, taskTitle);
+                getline(inputFile, taskDescription);
+                getline(inputFile, taskDueDate);
+                getline(inputFile, taskStatus);
+                cout << taskId << "\t"
+                     << taskTitle << "\t"
+                     << taskDescription << "\t"
+                     << taskDueDate << "\t"
+                     << taskStatus << endl;
+                cout << ("---") << endl;
+                inputFile.close();
+            }
         }
+
+        else
+            cout << "No records found." << endl;
     }
 
     void removeCompletedTask() {
-        int id = 0;
-        while (id <= 3) {
+        int records;
+        ifstream getRecords(databaseRecords);
+        getRecords >> records;
+        getRecords.close();
+
+        int filesDeleted = 0;
+        cout << "A = " << records << endl;
+
+        for (int id = 1; id <= records; id++) {
             string file = directory + to_string(id) + ".txt";
 
             ifstream inputFile(file);
@@ -184,11 +212,20 @@ public:
             getline(inputFile, taskDescription);
             getline(inputFile, taskDueDate);
             getline(inputFile, taskStatus);
-            inputFile.close();
-            if (taskStatus == "Completed")
+            if (taskStatus == "Completed") {
                 remove(file.c_str());
-            id++;
+                filesDeleted++;
+            }
+            inputFile.close();
+
+            cout << "D = " << filesDeleted << endl;
         }
+
+        cout << "N = " << records - filesDeleted;
+
+        ofstream saveRecords(databaseRecords);
+        saveRecords << records - filesDeleted;
+        saveRecords.close();
     }
 };
 
@@ -206,29 +243,25 @@ void showMenu() {
         cout << "Choice: ";
         cin >> choice;
 
+        cout << endl;
+
         if (choice == 1) {
-            int id;
             string title;
             string description;
             string dueDate;
-            string status;
 
-            cout << "Task Id: ";
-            cin >> id;
+            cin.ignore();
 
             cout << "Task Title: ";
-            cin >> title;
+            getline(cin, title);
 
             cout << "Task Description: ";
-            cin >> description;
+            getline(cin, description);
 
             cout << "Task Due Date (DD-MM-YYYY): ";
-            cin >> dueDate;
+            getline(cin, dueDate);
 
-            cout << "Task Status: ";
-            cin >> status;
-
-            taskManager.addTask(id, title, description, dueDate, status);
+            taskManager.addTask(title, description, dueDate);
         }
 
         else if (choice == 2) {
@@ -238,7 +271,7 @@ void showMenu() {
             cout << "Id: ";
             cin >> id;
 
-            cout << "Note: C = Completed." << endl << "P = pending." << endl;
+            cout << "Note: C = Completed." << endl << "P = Pending." << endl;
 
 
             while (true) {
