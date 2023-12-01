@@ -3,8 +3,6 @@
 
 using namespace std;
 
-int counter = 0;
-
 class Task {
 private:
     string taskId;
@@ -108,10 +106,15 @@ private:
     string taskDueDate;
     string taskStatus;
     string directory = "../database/";
+    string totalFiles = directory + "total-files.txt";
 
 public:
     void addTask(int id, string title, string description, string dueDate, string status) {
         string file = directory + to_string(id) + ".txt";
+
+//        Storing number of files
+        ofstream records(totalFiles);
+        records << id;
 
         ofstream outputFile(file);
 
@@ -122,7 +125,6 @@ public:
                    << task.getDueDate() << endl
                    << task.getStatus();
         outputFile.close();
-        counter++;
     }
 
     void updateStatus(int id, string status) {
@@ -147,26 +149,27 @@ public:
     }
 
     void displayAll() {
-        int id = 1;
-        while (id <= 3) {
-            string file = directory + to_string(id) + ".txt";
+        int id;
+        ifstream records(totalFiles);
+        records >> id;
+
+       for (int index = 1; index <= id; index++) {
+            string file = directory + to_string(index) + ".txt";
 
             ifstream inputFile(file);
+
             getline(inputFile, taskId);
             getline(inputFile, taskTitle);
             getline(inputFile, taskDescription);
             getline(inputFile, taskDueDate);
             getline(inputFile, taskStatus);
-
             cout << taskId << "\t"
                  << taskTitle << "\t"
                  << taskDescription << "\t"
                  << taskDueDate << "\t"
                  << taskStatus << endl;
             cout << ("---") << endl;
-
             inputFile.close();
-            id++;
         }
     }
 
@@ -265,6 +268,7 @@ void showMenu() {
 
         else
             cout << "Invalid choice." << endl;
+        cout << endl;
     }
 }
 
