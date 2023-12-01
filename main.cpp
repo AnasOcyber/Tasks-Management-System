@@ -135,7 +135,8 @@ public:
                    << task.getStatus();
         outputFile.close();
 
-        cout << "Task added successfully." << endl;
+        cout << "Task added successfully." << endl
+             << "------------------------" << endl;
     }
 
     void updateStatus(int id, string status) {
@@ -158,6 +159,9 @@ public:
                    << taskDueDate << endl
                    << taskStatus;
         outputFile.close();
+
+        cout << "Status changed successfully." << endl
+             << "----------------------------";
     }
 
     void displayAll() {
@@ -191,7 +195,8 @@ public:
         }
 
         else
-            cout << "No records found." << endl;
+            cout << "No records found." << endl
+                 << "-----------------";
     }
 
     void removeCompletedTask() {
@@ -201,7 +206,6 @@ public:
         getRecords.close();
 
         int filesDeleted = 0;
-        cout << "A = " << records << endl;
 
         for (int id = 1; id <= records; id++) {
             string file = directory + to_string(id) + ".txt";
@@ -214,14 +218,16 @@ public:
             getline(inputFile, taskStatus);
             if (taskStatus == "Completed") {
                 remove(file.c_str());
+                cout << "Task(s) removed successfully." << endl
+                     << "--------------------------";
                 filesDeleted++;
             }
             inputFile.close();
-
-            cout << "D = " << filesDeleted << endl;
         }
 
-        cout << "N = " << records - filesDeleted;
+        if (!filesDeleted)
+            cout << "No completed tasks." << endl
+                 << "-----------------" << endl;
 
         ofstream saveRecords(databaseRecords);
         saveRecords << records - filesDeleted;
@@ -271,23 +277,36 @@ void showMenu() {
             cout << "Id: ";
             cin >> id;
 
-            cout << "Note: C = Completed." << endl << "P = Pending." << endl;
+            int checkId;
 
+            ifstream inputFile("../database/" + to_string(id) + ".txt");
+            inputFile >> checkId;
 
-            while (true) {
-                cout << "Status (C/P): ";
-                cin >> status;
-                if (status == 'C') {
-                    taskManager.updateStatus(id, "Completed");
-                    break;
+            if (checkId == id) {
+
+                while (true) {
+                    cout << "C for Completed." << endl
+                         << "P for Pending." << endl;
+
+                    cout << "Status (C/P): ";
+                    cin >> status;
+                    cout << endl;
+                    if (status == 'C') {
+                        taskManager.updateStatus(id, "Completed");
+                        break;
+                    }
+                    else if (status == 'P') {
+                        taskManager.updateStatus(id, "Pending");
+                        break;
+                    }
+                    else
+                        cout << "Only C or P!" << endl
+                             << "------------" << endl;
                 }
-                else if (status == 'P') {
-                    taskManager.updateStatus(id, "Pending");
-                    break;
-                }
-                else
-                    cout << "Only C or P!";
             }
+            else
+                cout << "No record found for id: " << id << endl
+                     << "-------------------------";
         }
 
         else if (choice == 3)
@@ -297,7 +316,8 @@ void showMenu() {
             taskManager.removeCompletedTask();
 
         else if (choice == 5)
-            cout << "Exiting";
+            cout << "Exiting" << endl
+                 << "-------";
 
         else
             cout << "Invalid choice." << endl;
